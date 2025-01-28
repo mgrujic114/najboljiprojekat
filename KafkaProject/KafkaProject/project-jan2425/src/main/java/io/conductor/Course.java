@@ -152,4 +152,12 @@ public class Course {
     public void setCurriculum(String curriculum) {
         this.curriculum = curriculum;
     }
+
+    @Override
+    public String toString() {
+        return "Course{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                '}';
+    }
 }
