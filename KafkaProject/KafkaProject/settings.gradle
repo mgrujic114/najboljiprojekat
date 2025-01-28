@@ -1,0 +1,4 @@
+rootProject.name = 'KafkaProject'
+include 'project-jan2425'
+
+
