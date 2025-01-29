@@ -153,11 +153,4 @@ public class Course {
         this.curriculum = curriculum;
     }
 
-    @Override
-    public String toString() {
-        return "Course{" +
-                "id='" + id + '\'' +
-                ", title='" + title + '\'' +
-                '}';
-    }
 }

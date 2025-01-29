@@ -1,14 +1,15 @@
 io/conductor/Consumer.java
  io.conductor.Consumer
  io.conductor.Consumer$1
-io/conductor/ChangeHandler.java
- io.conductor.ChangeHandler
 io/conductor/Producer.java
  io.conductor.Producer
-io/conductor/Course.java
- io.conductor.Course
+io/conductor/ChangeHandler.java
+ io.conductor.ChangeHandler
 io/conductor/ProducerBatch.java
  io.conductor.ProducerBatch
  io.conductor.ProducerBatch$1
+ io.conductor.ProducerBatch$2
+io/conductor/Course.java
+ io.conductor.Course
 io/conductor/ConsumerBatch.java
  io.conductor.ConsumerBatch

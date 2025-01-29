@@ -21,6 +21,7 @@ public class ProducerBatch {
     private static final String API_URL = "http://localhost:5000/stream/type1";
     private static final String KAFKA_TOPIC = "batch-topic";
     private static final int BATCH_SIZE = 100;  // Batch size for each message
+    private static KafkaProducer<String, String> producer;
 
     public static void main(String[] args) {
         log.info("Kafka Producer");
@@ -35,7 +36,7 @@ public class ProducerBatch {
         properties.setProperty(ProducerConfig.LINGER_MS_CONFIG, "100");  // Wait for 100ms to accumulate a batch
 
         // Create the Producer
-        KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
+        producer = new KafkaProducer<>(properties);
 
         try {
             // Fetch data from API and process it
@@ -50,7 +51,7 @@ public class ProducerBatch {
                 // Check if the batch size has been reached
                 if (currentBatch.size() >= BATCH_SIZE) {
                     // Send the current batch of courses to Kafka
-                    sendBatch(producer, currentBatch);
+                    sendBatch(currentBatch);
                     // Clear the batch for the next set of courses
                     currentBatch.clear();
                 }
@@ -58,8 +59,9 @@ public class ProducerBatch {
 
             // Send any remaining courses that didn't make a full batch
             if (!currentBatch.isEmpty()) {
-                sendBatch(producer, currentBatch);
+                sendBatch(currentBatch);
             }
+            closeProducer();
 
         } catch (Exception e) {
             log.error("Error fetching or sending data", e);
@@ -105,7 +107,7 @@ public class ProducerBatch {
         return courses;
     }
 
-    private static void sendBatch(KafkaProducer<String, String> producer, List<Course> batch) {
+    private static void sendBatch(List<Course> batch) {
         try {
             // Convert the batch of courses to a JSON string
             ObjectMapper objectMapper = new ObjectMapper();
@@ -134,4 +136,23 @@ public class ProducerBatch {
         }
     }
 
+    private static void closeProducer() {
+        ProducerRecord<String, String> record = new ProducerRecord<>(KAFKA_TOPIC, "close");
+
+        producer.send(record, new Callback() {
+            // nije samo slanje nego i provera dal smo uspesno poslali
+            @Override
+            public void onCompletion(RecordMetadata metadata, Exception exception) {
+                // executes every time a record is successfully sent or an exception is thrown
+                if (exception == null)
+                    log.info("Recieved new metadata" +
+                            "\nTopic: " + metadata.topic() +
+                            "\nPartition: " + metadata.partition() +
+                            "\nOffset: " + metadata.offset() +
+                            "\nTimestamp: " + metadata.timestamp());
+                else
+                    log.error("Error while producing", exception);
+            }
+        });
+    }
 }
