@@ -23,10 +23,13 @@ public class ConsumerBatch {
     private final static Logger log = LoggerFactory.getLogger(ConsumerBatch.class.getSimpleName());
     private static final String BOOTSTRAP_SERVERS = "127.0.0.1:9092";
     private static final String KAFKA_TOPIC = "batch-topic";
-    private static final String CSV_FILE = "courses1.csv";
+    private static final String CSV_FILE = "courses_fr_2.csv";
     private static final String CLOSE_MSG = "close";
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    private static Boolean LOOP = true;
+
 
     public static void main(String[] args) {
         log.info("Kafka Consumer");
@@ -62,19 +65,20 @@ public class ConsumerBatch {
         try {
             csvWriter = new FileWriter(CSV_FILE);
             // Write CSV header
-            csvWriter.append("id;title;url;is_paid;instructor_names;category;headline;num_subscribers;rating;num_reviews;instructional_level;objectives;curriculum\n");
+            csvWriter.append("id;title;/url;/is_paid;/instructor_names;/category;/headline;/num_subscribers;/rating;/num_reviews;/instructional_level;/objectives;/curriculum\n");
 
             // Subscribe to the Kafka topic
             consumer.subscribe(Arrays.asList(KAFKA_TOPIC));
 
             // Poll for new data
-            while (true) {
+            while (LOOP) {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
 
                 for (ConsumerRecord<String, String> record : records) {
-                    log.info("Received message: {}", record.value());
+//                    log.info("Received message: {}", record.value());
                     if (record.value().equalsIgnoreCase(CLOSE_MSG)){
 //                        closeConsumer(consumer);
+                        LOOP = false;
                         break;
                     }
                         // Parse the JSON batch
@@ -82,29 +86,29 @@ public class ConsumerBatch {
                         // Write each course to the CSV file
                     for (Course course : courses) {
                         csvWriter.append(course.getId())
-                                .append(";")
+                                .append(";/")
                                 .append(course.getTitle())
-                                .append(";")
+                                .append(";/")
                                 .append(course.getUrl())
-                                .append(";")
+                                .append(";/")
                                 .append(course.getPaid())
-                                .append(";")
+                                .append(";/")
                                 .append(course.getInstructorNames())
-                                .append(";")
+                                .append(";/")
                                 .append(course.getCategory())
-                                .append(";")
+                                .append(";/")
                                 .append(course.getHeadline())
-                                .append(";")
+                                .append(";/")
                                 .append(String.valueOf(course.getNumSubscribers()))
-                                .append(";")
+                                .append(";/")
                                 .append(String.valueOf(course.getRating()))
-                                .append(";")
+                                .append(";/")
                                 .append(String.valueOf(course.getNumReviews()))
-                                .append(";")
+                                .append(";/")
                                 .append(course.getInstructionalLevel())
-                                .append(";")
+                                .append(";/")
                                 .append(course.getObjectives())
-                                .append(";")
+                                .append(";/")
                                 .append(course.getCurriculum())
                                 .append("\n");
                     }
@@ -123,7 +127,6 @@ public class ConsumerBatch {
             } catch (IOException e) {
                 System.out.println("crkni");
             }
-
         }
     }
 

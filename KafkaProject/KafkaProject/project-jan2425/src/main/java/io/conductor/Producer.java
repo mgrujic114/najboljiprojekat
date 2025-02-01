@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Producer {
 
-    private final static Logger log = LoggerFactory.getLogger(org.apache.kafka.clients.producer.Producer.class.getSimpleName());
+//    private final static Logger log = LoggerFactory.getLogger(org.apache.kafka.clients.producer.Producer.class.getSimpleName());
     private static final String BOOTSTRAP_SERVERS = "127.0.0.1:9092";
     private static final String API_URL = "http://localhost:5000/stream/type1";
     private static final String KAFKA_TOPIC = "stream-topic";
@@ -129,10 +129,10 @@ public class Producer {
 //        }
 //
         // flush - sync operation
-        producer.flush();
-
-        // close the Producer
-        producer.close();
+//        producer.flush();
+//
+//        // close the Producer
+//        producer.close();
     }
 }
 
